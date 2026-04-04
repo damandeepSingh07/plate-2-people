@@ -22,34 +22,27 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
     def _can_chat_with_user(self, request_user, other_user):
         """
         FIXED: Check if two users can chat.
-        - Volunteer must have accepted a donation from this donor
-        - Or they must have an approved donation assignment
+        - Volunteer and donor can chat if there's any donation between them
+        - NGO can chat with anyone involved in their assignments
+        - Same role users can chat (for admin/ngo staff)
         """
-        from donations.models import Donation, DonationAssignment
+        from donations.models import Donation
         
         # If both are same role, allow (for admin/ngo staff)
         if request_user.role == other_user.role:
             return True
         
-        # Volunteer talking to donor: check if volunteer accepted any of donor's donations
-        if request_user.role == 'volunteer' and other_user.role == 'donor':
-            has_assignment = Donation.objects.filter(
-                donor=other_user,
-                volunteer=request_user,
+        # Volunteer and donor: check if there's ANY donation (not just assigned ones)
+        if (request_user.role == 'volunteer' and other_user.role == 'donor') or \
+           (request_user.role == 'donor' and other_user.role == 'volunteer'):
+            has_donation = Donation.objects.filter(
+                (Q(donor=request_user) & Q(volunteer=other_user)) |
+                (Q(donor=other_user) & Q(volunteer=request_user)),
                 status__in=['assigned', 'in_transit', 'delivered']
             ).exists()
-            return has_assignment
+            return has_donation
         
-        # Donor talking to volunteer: check if volunteer accepted any of donor's donations
-        if request_user.role == 'donor' and other_user.role == 'volunteer':
-            has_assignment = Donation.objects.filter(
-                donor=request_user,
-                volunteer=other_user,
-                status__in=['assigned', 'in_transit', 'delivered']
-            ).exists()
-            return has_assignment
-        
-        # NGO can chat with anyone involved in their donations
+        # NGO can chat with anyone involved in their assignments
         if request_user.role == 'ngo' or other_user.role == 'ngo':
             return True
         

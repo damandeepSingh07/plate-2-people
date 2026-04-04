@@ -2,15 +2,14 @@
  * Badges Display Component
  * Shows user's earned badges with animations
  */
-import React, { useContext, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import api from '../../api/axios';
+import React, { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import api from "../../api/axios";
 
 const BadgesDisplay = ({ userId = null }) => {
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     const fetchBadges = async () => {
@@ -24,8 +23,8 @@ const BadgesDisplay = ({ userId = null }) => {
         setBadges(response.data.badges || []);
         setError(null);
       } catch (err) {
-        console.error('Error fetching badges:', err);
-        setError('Failed to load badges');
+        console.error("Error fetching badges:", err);
+        setError("Failed to load badges");
       } finally {
         setLoading(false);
       }
@@ -70,60 +69,76 @@ const BadgesDisplay = ({ userId = null }) => {
 
   const allBadges = [
     {
-      id: 'first_donation',
-      name: 'First Donation',
-      icon: '🎉',
-      description: 'Post your first food donation',
-      earned: badges.some((b) => b.id === 'first_donation'),
+      id: "first_donation",
+      name: "First Donation",
+      icon: "🎉",
+      description: "Post your first food donation",
+      earned: badges.some(
+        (b) => b.id === "first_donation" || b.code === "first_donation",
+      ),
     },
     {
-      id: 'food_hero',
-      name: 'Food Hero',
-      icon: '🦸',
-      description: 'Post 10 food donations',
-      earned: badges.some((b) => b.id === 'food_hero'),
+      id: "food_hero",
+      name: "Food Hero",
+      icon: "🦸",
+      description: "Post 10 food donations",
+      earned: badges.some(
+        (b) => b.id === "food_hero" || b.code === "food_hero",
+      ),
     },
     {
-      id: 'golden_donor',
-      name: 'Golden Donor',
-      icon: '👑',
-      description: 'Post 50+ food donations',
-      earned: badges.some((b) => b.id === 'golden_donor'),
+      id: "golden_donor",
+      name: "Golden Donor",
+      icon: "👑",
+      description: "Post 50+ food donations",
+      earned: badges.some(
+        (b) => b.id === "golden_donor" || b.code === "golden_donor",
+      ),
     },
     {
-      id: 'delivery_starter',
-      name: 'Delivery Starter',
-      icon: '🚀',
-      description: 'Complete your first delivery',
-      earned: badges.some((b) => b.id === 'delivery_starter'),
+      id: "delivery_starter",
+      name: "Delivery Starter",
+      icon: "🚀",
+      description: "Complete your first delivery",
+      earned: badges.some(
+        (b) => b.id === "delivery_starter" || b.code === "delivery_starter",
+      ),
     },
     {
-      id: 'delivery_master',
-      name: 'Delivery Master',
-      icon: '⚡',
-      description: 'Complete 25 deliveries',
-      earned: badges.some((b) => b.id === 'delivery_master'),
+      id: "delivery_master",
+      name: "Delivery Master",
+      icon: "⚡",
+      description: "Complete 25 deliveries",
+      earned: badges.some(
+        (b) => b.id === "delivery_master" || b.code === "delivery_master",
+      ),
     },
     {
-      id: 'delivery_legend',
-      name: 'Delivery Legend',
-      icon: '🌟',
-      description: 'Complete 100 deliveries',
-      earned: badges.some((b) => b.id === 'delivery_legend'),
+      id: "delivery_legend",
+      name: "Delivery Legend",
+      icon: "🌟",
+      description: "Complete 100 deliveries",
+      earned: badges.some(
+        (b) => b.id === "delivery_legend" || b.code === "delivery_legend",
+      ),
     },
     {
-      id: 'ngo_partner',
-      name: 'NGO Partner',
-      icon: '🤝',
-      description: 'Complete your first NGO assignment',
-      earned: badges.some((b) => b.id === 'ngo_partner'),
+      id: "ngo_partner",
+      name: "NGO Partner",
+      icon: "🤝",
+      description: "Complete your first NGO assignment",
+      earned: badges.some(
+        (b) => b.id === "ngo_partner" || b.code === "ngo_partner",
+      ),
     },
     {
-      id: 'ngo_champion',
-      name: 'NGO Champion',
-      icon: '🏆',
-      description: 'Complete 50 NGO assignments',
-      earned: badges.some((b) => b.id === 'ngo_champion'),
+      id: "ngo_champion",
+      name: "NGO Champion",
+      icon: "🏆",
+      description: "Complete 50 NGO assignments",
+      earned: badges.some(
+        (b) => b.id === "ngo_champion" || b.code === "ngo_champion",
+      ),
     },
   ];
 
@@ -134,7 +149,9 @@ const BadgesDisplay = ({ userId = null }) => {
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin text-4xl">⏳</div>
-        <p className="text-gray-600 dark:text-gray-300 mt-2">Loading badges...</p>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          Loading badges...
+        </p>
       </div>
     );
   }
