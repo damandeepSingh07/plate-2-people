@@ -1,44 +1,105 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import './Modal.css';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import "./Modal.css";
 
 export default function DonationDetailsModal({ donation, isOpen, onClose }) {
   if (!donation) return null;
 
   const getStatusColor = (status) => {
     const colors = {
-      available: 'text-green-600 bg-green-50',
-      requested: 'text-blue-600 bg-blue-50',
-      assigned: 'text-purple-600 bg-purple-50',
-      in_transit: 'text-yellow-600 bg-yellow-50',
-      delivered: 'text-gray-600 bg-gray-50',
-      expired: 'text-red-600 bg-red-50',
+      available: "text-green-600 bg-green-50",
+      requested: "text-blue-600 bg-blue-50",
+      assigned: "text-purple-600 bg-purple-50",
+      in_transit: "text-yellow-600 bg-yellow-50",
+      delivered: "text-gray-600 bg-gray-50",
+      expired: "text-red-600 bg-red-50",
     };
     return colors[status] || colors.available;
   };
 
   const formatDateTime = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusEmoji = (status) => {
     const emojis = {
-      available: '📦',
-      requested: '🔔',
-      assigned: '👤',
-      in_transit: '🚚',
-      delivered: '✅',
-      expired: '⏰',
+      available: "📦",
+      requested: "🔔",
+      assigned: "👤",
+      in_transit: "🚚",
+      delivered: "✅",
+      expired: "⏰",
     };
-    return emojis[status] || '📦';
+    return emojis[status] || "📦";
+  };
+
+  const openGoogleMaps = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const openPickupInMaps = () => {
+    const query =
+      donation.pickup_lat && donation.pickup_lng
+        ? `${donation.pickup_lat},${donation.pickup_lng}`
+        : donation.pickup_location;
+    openGoogleMaps(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    );
+  };
+
+  const openDeliveryInMaps = () => {
+    if (
+      !donation.delivery_location &&
+      !(donation.delivery_lat && donation.delivery_lng)
+    )
+      return;
+    const query =
+      donation.delivery_lat && donation.delivery_lng
+        ? `${donation.delivery_lat},${donation.delivery_lng}`
+        : donation.delivery_location;
+    openGoogleMaps(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    );
+  };
+
+  const openDirections = (origin, destination) => {
+    if (!destination) return;
+    openGoogleMaps(
+      `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=driving`,
+    );
+  };
+
+  const openPickupToDelivery = () => {
+    if (
+      !donation.delivery_location &&
+      !(donation.delivery_lat && donation.delivery_lng)
+    )
+      return;
+    const origin =
+      donation.pickup_lat && donation.pickup_lng
+        ? `${donation.pickup_lat},${donation.pickup_lng}`
+        : donation.pickup_location;
+    const destination =
+      donation.delivery_lat && donation.delivery_lng
+        ? `${donation.delivery_lat},${donation.delivery_lng}`
+        : donation.delivery_location;
+    openDirections(origin, destination);
+  };
+
+  const openDeviceToPickup = () => {
+    const destination =
+      donation.pickup_lat && donation.pickup_lng
+        ? `${donation.pickup_lat},${donation.pickup_lng}`
+        : donation.pickup_location;
+    openDirections("My+Location", destination);
   };
 
   return (
@@ -69,8 +130,12 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
               {/* Header */}
               <div className="sticky top-0 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 text-white p-6 flex justify-between items-start">
                 <div>
-                  <div className="text-sm text-blue-100 mb-1">Donation Details</div>
-                  <h2 className="text-2xl font-bold">{donation.food_details}</h2>
+                  <div className="text-sm text-blue-100 mb-1">
+                    Donation Details
+                  </div>
+                  <h2 className="text-2xl font-bold">
+                    {donation.food_details}
+                  </h2>
                 </div>
                 <button
                   onClick={onClose}
@@ -87,8 +152,11 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Current Status
                   </h3>
-                  <span className={`px-4 py-2 rounded-full font-semibold text-sm ${getStatusColor(donation.status)}`}>
-                    {getStatusEmoji(donation.status)} {donation.status.replace('_', ' ').toUpperCase()}
+                  <span
+                    className={`px-4 py-2 rounded-full font-semibold text-sm ${getStatusColor(donation.status)}`}
+                  >
+                    {getStatusEmoji(donation.status)}{" "}
+                    {donation.status.replace("_", " ").toUpperCase()}
                   </span>
                 </div>
 
@@ -107,7 +175,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Donor Info */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Donor</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Donor
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       {donation.donor_name}
                     </p>
@@ -115,7 +185,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
 
                   {/* Quantity */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Quantity</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Quantity
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       📦 {donation.quantity}
                     </p>
@@ -123,7 +195,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
 
                   {/* Pickup Location */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg md:col-span-2">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pickup Location</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Pickup Location
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       📍 {donation.pickup_location}
                     </p>
@@ -131,7 +205,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
 
                   {/* Expiry Time */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expires</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Expires
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       ⏰ {formatDateTime(donation.expiry_time)}
                     </p>
@@ -139,7 +215,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
 
                   {/* Food Type */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Food Type</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Food Type
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       {donation.food_type}
                     </p>
@@ -147,7 +225,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
 
                   {/* Created Date */}
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg md:col-span-2">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Created</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                      Created
+                    </p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       📅 {formatDateTime(donation.created_at)}
                     </p>
@@ -156,7 +236,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                   {/* Volunteer Info (if assigned) */}
                   {donation.volunteer_name && (
                     <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg md:col-span-2">
-                      <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">Assigned Volunteer</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">
+                        Assigned Volunteer
+                      </p>
                       <p className="text-lg font-semibold text-blue-900 dark:text-blue-100">
                         👤 {donation.volunteer_name}
                       </p>
@@ -164,9 +246,11 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                   )}
 
                   {/* Delivery Date (if delivered) */}
-                  {donation.status === 'delivered' && (
+                  {donation.status === "delivered" && (
                     <div className="bg-green-50 dark:bg-green-900 p-4 rounded-lg md:col-span-2">
-                      <p className="text-sm text-green-600 dark:text-green-400 mb-1">Delivered</p>
+                      <p className="text-sm text-green-600 dark:text-green-400 mb-1">
+                        Delivered
+                      </p>
                       <p className="text-lg font-semibold text-green-900 dark:text-green-100">
                         ✅ {formatDateTime(donation.updated_at)}
                       </p>
@@ -177,7 +261,9 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                 {/* Notes */}
                 {donation.notes && (
                   <div className="bg-amber-50 dark:bg-amber-900 p-4 rounded-lg">
-                    <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">Notes</p>
+                    <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">
+                      Notes
+                    </p>
                     <p className="text-gray-900 dark:text-white">
                       {donation.notes}
                     </p>
@@ -185,11 +271,49 @@ export default function DonationDetailsModal({ donation, isOpen, onClose }) {
                 )}
               </div>
 
-              {/* Footer */}
-              <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600">
+              {/* Location Quick Actions */}
+              <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600 space-y-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <button
+                    onClick={openPickupInMaps}
+                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition flex items-center justify-center gap-2"
+                  >
+                    <span>📍</span>
+                    <span>Open Pickup in Google Maps</span>
+                  </button>
+
+                  {donation.delivery_location && (
+                    <button
+                      onClick={openDeliveryInMaps}
+                      className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition flex items-center justify-center gap-2"
+                    >
+                      <span>🏢</span>
+                      <span>Open Delivery in Google Maps</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={openDeviceToPickup}
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition flex items-center justify-center gap-2"
+                  >
+                    <span>🚗</span>
+                    <span>Navigate My Location → Pickup</span>
+                  </button>
+
+                  {donation.delivery_location && (
+                    <button
+                      onClick={openPickupToDelivery}
+                      className="w-full bg-gradient-to-r from-orange-500 to-rose-500 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-rose-600 transition flex items-center justify-center gap-2"
+                    >
+                      <span>🧭</span>
+                      <span>Navigate Pickup → Delivery</span>
+                    </button>
+                  )}
+                </div>
+
                 <button
                   onClick={onClose}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
                 >
                   Close
                 </button>
