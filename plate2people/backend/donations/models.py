@@ -409,6 +409,7 @@ class Badge(models.Model):
         ('legendary', 'Legendary'),
     ]
 
+    code = models.CharField(max_length=100, unique=True)  # Unique identifier: 'first_donation', 'food_hero', etc.
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     icon_url = models.URLField()

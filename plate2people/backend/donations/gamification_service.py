@@ -144,16 +144,17 @@ class GamificationService:
         donation_count = Donation.objects.filter(donor=user).count()
         
         badge_mappings = {
-            'first_donation': (1, '🎉'),
-            'food_hero': (10, '🦸'),
-            'golden_donor': (50, '👑'),
+            'first_donation': (1, '🎉', 'First Donation'),
+            'food_hero': (10, '🦸', 'Food Hero'),
+            'golden_donor': (50, '👑', 'Golden Donor'),
         }
         
-        for badge_key, (count_threshold, emoji) in badge_mappings.items():
+        for badge_code, (count_threshold, emoji, name) in badge_mappings.items():
             if donation_count >= count_threshold:
                 badge, created = Badge.objects.get_or_create(
-                    name=badge_key.replace('_', ' ').title(),
+                    code=badge_code,
                     defaults={
+                        'name': name,
                         'description': f'Earned after {count_threshold} donations',
                         'icon_url': '',
                         'icon_emoji': emoji,
@@ -175,31 +176,33 @@ class GamificationService:
         if user.role != 'volunteer':
             return earned_badges
         
-        delivery_count = DonationAssignment.objects.filter(
+        # Count deliveries from DonationAssignment (NGO assignments)
+        assignment_delivery_count = DonationAssignment.objects.filter(
             volunteer=user,
             status='delivered'
         ).count()
         
-        # Also count direct deliveries (volunteer accepted without NGO assignment)
+        # Count direct deliveries (volunteer accepted without NGO assignment)
         direct_delivery_count = Donation.objects.filter(
             volunteer=user,
             status='delivered'
-        ).count()
+        ).exclude(assignment__status='delivered').count()  # Avoid double-counting
         
-        # Use the higher count to ensure badges are awarded for all delivery types
-        delivery_count = max(delivery_count, direct_delivery_count)
+        # Total delivery count
+        total_delivery_count = assignment_delivery_count + direct_delivery_count
         
         badge_mappings = {
-            'delivery_starter': (1, '🚀'),
-            'delivery_master': (25, '⚡'),
-            'delivery_legend': (100, '🌟'),
+            'delivery_starter': (1, '🚀', 'Delivery Starter'),
+            'delivery_master': (25, '⚡', 'Delivery Master'),
+            'delivery_legend': (100, '🌟', 'Delivery Legend'),
         }
         
-        for badge_key, (count_threshold, emoji) in badge_mappings.items():
-            if delivery_count >= count_threshold:
+        for badge_code, (count_threshold, emoji, name) in badge_mappings.items():
+            if total_delivery_count >= count_threshold:
                 badge, created = Badge.objects.get_or_create(
-                    name=badge_key.replace('_', ' ').title(),
+                    code=badge_code,
                     defaults={
+                        'name': name,
                         'description': f'Earned after {count_threshold} deliveries',
                         'icon_url': '',
                         'icon_emoji': emoji,
@@ -227,15 +230,16 @@ class GamificationService:
         ).count()
         
         badge_mappings = {
-            'ngo_partner': (1, '🤝'),
-            'ngo_champion': (50, '🏆'),
+            'ngo_partner': (1, '🤝', 'NGO Partner'),
+            'ngo_champion': (50, '🏆', 'NGO Champion'),
         }
         
-        for badge_key, (count_threshold, emoji) in badge_mappings.items():
+        for badge_code, (count_threshold, emoji, name) in badge_mappings.items():
             if assignment_count >= count_threshold:
                 badge, created = Badge.objects.get_or_create(
-                    name=badge_key.replace('_', ' ').title(),
+                    code=badge_code,
                     defaults={
+                        'name': name,
                         'description': f'Earned after {count_threshold} assignments',
                         'icon_url': '',
                         'icon_emoji': emoji,

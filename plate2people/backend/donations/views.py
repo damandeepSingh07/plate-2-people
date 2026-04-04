@@ -525,7 +525,8 @@ def get_user_badges(request):
     
     badges_data = [
         {
-            'id': ub.badge.id,
+            'id': ub.badge.code,  # Use badge code as the identifier
+            'code': ub.badge.code,
             'name': ub.badge.name,
             'description': ub.badge.description,
             'icon_url': ub.badge.icon_url,
@@ -724,7 +725,6 @@ def mark_delivered(request, pk):
         return Response({'error': 'Only assigned volunteer can mark as delivered.'}, status=403)
 
     donation.status = 'delivered'
-    donation.delivered_at = timezone.now()
     donation.save()
     
     # Award points to volunteer for completing delivery
