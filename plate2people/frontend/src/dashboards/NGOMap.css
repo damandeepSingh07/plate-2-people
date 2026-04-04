@@ -1,0 +1,149 @@
+/* Tracking CTA banner */
+.ngo-tracking-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, var(--green-pale), #f0fff4);
+  border: 2px solid #b7e4c7;
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.ngo-tracking-banner > span {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.ngo-tracking-banner > div {
+  flex: 1;
+}
+
+.ngo-tracking-banner strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.ngo-tracking-banner p {
+  font-size: 0.85rem;
+  color: #1b4332;
+}
+
+/* Track buttons */
+.track-btn-green {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(45, 106, 79, 0.35);
+  transition: all var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.track-btn-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(45, 106, 79, 0.45);
+}
+
+.track-btn-ngo {
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(30, 64, 175, 0.3);
+  transition: all var(--transition);
+}
+.track-btn-ngo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(30, 64, 175, 0.4);
+}
+
+/* Request preview box */
+.request-preview-box {
+  background: var(--orange-pale);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  font-size: 0.88rem;
+  color: var(--brown);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.request-preview-box strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.map-enabled-tag {
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+/* Map pin badge in donation card */
+.map-pin-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Live tracking badge on request */
+.ngo-live-tracking-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-pale);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 12px;
+  border: 1px solid #b7e4c7;
+}
+
+.live-dot-ngo {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  animation: blink 1.2s ease infinite;
+}
+
+/* Toast */
+.toast-notification-green {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 300;
+  background: var(--green);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.92rem;
+  font-weight: 600;
+  animation: fadeUp 0.3s ease;
+  max-width: 360px;
+}

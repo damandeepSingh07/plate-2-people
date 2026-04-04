@@ -1,0 +1,262 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ ROOT & THEMING ============ */
+:root {
+  --primary-color: #f04438;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+}
+
+html.dark {
+  --primary-color: #ff6b55;
+  --success-color: #34d399;
+  --warning-color: #fbbf24;
+  --danger-color: #f87171;
+}
+
+/* ============ BASE STYLES ============ */
+*,
+*::before,
+*::after {
+  @apply border-gray-200 dark:border-gray-700;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-50;
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500;
+}
+
+/* ============ BUTTONS ============ */
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold rounded-lg transition-all duration-200 border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600;
+  }
+
+  .btn-success {
+    @apply px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all duration-200;
+  }
+
+  .btn-small {
+    @apply px-3 py-1 text-sm font-medium rounded transition-all duration-200;
+  }
+
+  .btn-neumorphic {
+    @apply px-6 py-3 bg-gray-100 dark:bg-gray-800 font-semibold rounded-2xl shadow-medium dark:shadow-lg hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 active:shadow-sm transform hover:scale-105 active:scale-95;
+  }
+}
+
+/* ============ FORMS ============ */
+@layer components {
+  input,
+  textarea,
+  select {
+    @apply transition-colors duration-200;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 ring-red-500 dark:ring-red-400;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors;
+  }
+
+  .form-input:focus {
+    @apply border-red-500 dark:border-red-400 outline-none;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2;
+  }
+}
+
+/* ============ CARDS ============ */
+@layer components {
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft dark:shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply card hover:scale-105 hover:-translate-y-1 cursor-pointer;
+  }
+}
+
+/* ============ GRADIENTS ============ */
+@layer components {
+  .gradient-primary {
+    @apply bg-gradient-to-r from-red-500 to-orange-600;
+  }
+
+  .gradient-success {
+    @apply bg-gradient-to-r from-green-500 to-emerald-600;
+  }
+
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-red-500 to-orange-600 text-transparent bg-clip-text;
+  }
+}
+
+/* ============ BADGES ============ */
+@layer components {
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100;
+  }
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+/* ============ UTILITY CLASSES ============ */
+.page-loading {
+  @apply min-h-screen flex items-center justify-center bg-white dark:bg-gray-900;
+}
+
+.spinner {
+  @apply inline-block w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-red-500 rounded-full animate-spin;
+}
+
+
+/* Chatbot Floating Action Button */
+.chatbot-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.chatbot-fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 28px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot-fab-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
+}
+
+.chatbot-fab-btn:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .chatbot-fab {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chatbot-fab-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+}
+.badge-delivered { background: var(--green-pale); color: var(--green); }
+.badge-expired   { background: var(--gray-200); color: var(--gray-600); }
+.badge-cancelled { background: #ffd5d5; color: #c0392b; }
+.badge-pending   { background: #fff3cd; color: #856404; }
+.badge-approved  { background: var(--green-pale); color: var(--green); }
+.badge-rejected  { background: #ffd5d5; color: #c0392b; }
+.badge-fulfilled { background: #d1ecf1; color: #0c5460; }
+
+/* Page fade-in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s ease both; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in { animation: fadeIn 0.4s ease both; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+}

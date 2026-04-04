@@ -1,0 +1,134 @@
+/* Map info banner */
+.map-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+  border: 2px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  margin-bottom: 32px;
+}
+
+.map-info-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.map-info-banner strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 4px;
+}
+
+.map-info-banner p {
+  font-size: 0.85rem;
+  color: #3b5998;
+  line-height: 1.5;
+}
+
+/* Live tracking badge */
+.live-tracking-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, var(--green-pale), #f0fff4);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 12px;
+  border: 1px solid var(--green-pale);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  animation: blink 1.2s ease infinite;
+}
+
+.live-dot-small {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 4px;
+  animation: blink 1.2s ease infinite;
+}
+
+/* Volunteer assigned bar */
+.volunteer-assigned-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--brown-mid);
+}
+
+.vol-live-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--green-pale);
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* Track button */
+.track-btn {
+  background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 3px 12px rgba(30, 64, 175, 0.35);
+  transition: all var(--transition) !important;
+}
+.track-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 18px rgba(30, 64, 175, 0.45) !important;
+}
+
+/* Geo badge in modal */
+.geo-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: var(--green-pale);
+  color: var(--green);
+  border-radius: var(--radius-full);
+  margin-left: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+/* Toast */
+.toast-notification {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 300;
+  background: var(--brown);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.92rem;
+  font-weight: 600;
+  animation: fadeUp 0.3s ease;
+  max-width: 360px;
+}

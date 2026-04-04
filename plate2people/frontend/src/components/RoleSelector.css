@@ -1,0 +1,101 @@
+.role-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.role-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef0ff 100%);
+  border: 2.5px solid #e0e4f8;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Colored left accent bar */
+.role-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border-radius: 16px 0 0 16px;
+  transition: width 0.25s ease;
+}
+
+.role-card--orange::before { background: linear-gradient(180deg, #ff9a3c, #e0522a); }
+.role-card--green::before  { background: linear-gradient(180deg, #22c55e, #059669); }
+.role-card--brown::before  { background: linear-gradient(180deg, #a78bfa, #7c3aed); }
+
+/* Hover states */
+.role-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.18);
+}
+
+.role-card--orange:hover { border-color: #ff9a3c; background: linear-gradient(135deg, #fff8f0 0%, #fff1e6 100%); }
+.role-card--green:hover  { border-color: #22c55e; background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%); }
+.role-card--brown:hover  { border-color: #a78bfa; background: linear-gradient(135deg, #f5f0ff 0%, #ede6ff 100%); }
+
+/* Emoji bubble */
+.role-emoji {
+  font-size: 2rem;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.role-card--orange .role-emoji { background: linear-gradient(135deg, #ff9a3c, #e0522a); }
+.role-card--green .role-emoji  { background: linear-gradient(135deg, #22c55e, #059669); }
+.role-card--brown .role-emoji  { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+.role-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.role-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.role-subtitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.role-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.role-arrow {
+  font-size: 1.3rem;
+  color: #ccc;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.role-card:hover .role-arrow { transform: translateX(5px); color: #667eea; }
