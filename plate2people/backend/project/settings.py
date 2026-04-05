@@ -92,6 +92,16 @@ REST_FRAMEWORK = {
     ),
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://plate-2-people.onrender.com",
+]
+
+ALLOWED_HOSTS = [
+    "plate-2-people.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
+
 # JWT Settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -100,7 +110,9 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = [
+    "https://plate-2-people.vercel.app"
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ── Email Settings ─────────────────────────────────────────────────────────────
