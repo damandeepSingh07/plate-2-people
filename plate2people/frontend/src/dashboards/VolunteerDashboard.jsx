@@ -7,7 +7,6 @@ import api from '../api/axios'
 import Navbar from '../components/Navbar'
 import DonationCard from '../components/Cards/DonationCard'
 import DonationDetailsModal from '../components/Modals/DonationDetailsModal'
-import ChatModal from '../components/Modals/ChatModal'
 import Leaderboard from '../components/Gamification/Leaderboard'
 import BadgesDisplay from '../components/Gamification/BadgesDisplay'
 import { motion } from 'framer-motion'
@@ -29,8 +28,6 @@ export default function VolunteerDashboard() {
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [chatDonation, setChatDonation] = useState(null)
-  const [showChatModal, setShowChatModal] = useState(false)
 
   // Fetch donations on load
   useEffect(() => {
@@ -138,11 +135,6 @@ export default function VolunteerDashboard() {
   const viewDonationDetails = (donation) => {
     setSelectedDonation(donation)
     setShowDetailsModal(true)
-  }
-
-  const openChat = (donation) => {
-    setChatDonation(donation)
-    setShowChatModal(true)
   }
 
   const containerVariants = {
@@ -351,7 +343,6 @@ export default function VolunteerDashboard() {
                       donation={donation}
                       onStartDelivery={startDelivery}
                       onMarkDelivered={markDelivered}
-                      onChat={() => openChat(donation)}
                       onViewDetails={viewDonationDetails}
                       role="volunteer"
                       isActive={true}
@@ -450,14 +441,6 @@ export default function VolunteerDashboard() {
         onClose={() => setShowDetailsModal(false)}
       />
 
-      {/* Chat Modal */}
-      <ChatModal
-        isOpen={showChatModal}
-        onClose={() => { setShowChatModal(false); setChatDonation(null) }}
-        donation={chatDonation}
-        recipientId={chatDonation?.donor}
-        recipientName={chatDonation?.donor_name}
-      />
     </div>
   )
 }

@@ -6,11 +6,7 @@ import api from '../api/axios'
 import Navbar from '../components/Navbar'
 import './Auth.css'
 
-const BRAND_STATS = [
-  { icon: '🍱', num: '12,000+', label: 'Meals shared' },
-  { icon: '🚴', num: '500+',    label: 'Active volunteers' },
-  { icon: '🏢', num: '80+',     label: 'NGO partners' },
-]
+
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -89,15 +85,7 @@ export default function SignIn() {
     } finally { setLoading(false) }
   }
 
-  const handleGoogleSignIn = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-    const redirectUri = `${window.location.origin}/auth/google`
-    if (clientId) {
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`
-    } else {
-      setError('Google Sign-In is not configured')
-    }
-  }
+
 
   return (
     <div className="auth-page">
@@ -121,14 +109,15 @@ export default function SignIn() {
               Sign in to your account and get back to connecting food with people who need it most.
             </p>
 
-            <div className="brand-stats">
-              {BRAND_STATS.map((s, i) => (
-                <div key={i} className="brand-stat">
-                  <div className="brand-stat-icon">{s.icon}</div>
-                  <div>
-                    <div className="brand-stat-num">{s.num}</div>
-                    <div className="brand-stat-label">{s.label}</div>
-                  </div>
+            <div className="brand-features">
+              {[
+                { icon: '🔒', text: 'Secure & Private' },
+                { icon: '🌱', text: 'Zero Food Waste' },
+                { icon: '❤️', text: 'Real Community Impact' },
+              ].map((f, i) => (
+                <div key={i} className="brand-feature-item">
+                  <span className="brand-feature-icon">{f.icon}</span>
+                  <span className="brand-feature-text">{f.text}</span>
                 </div>
               ))}
             </div>
@@ -186,11 +175,7 @@ export default function SignIn() {
                     </button>
                   </form>
 
-                  <div className="divider-modern" style={{ margin: '24px 0' }}>or</div>
 
-                  <button onClick={handleGoogleSignIn} className="modern-btn google">
-                    <span className="google-icon">🔵</span> Continue with Google
-                  </button>
 
                   <div className="auth-links">
                     <button onClick={() => setStep('forgot')} className="auth-link-modern">

@@ -13,6 +13,10 @@ urlpatterns = [
     path('send-otp/', views.send_otp, name='send-otp'),
     path('verify-otp/', views.verify_otp, name='verify-otp'),
 
+    # ── Password Reset ───────────────────────────────────────────────────────
+    path('request-password-reset/', views.request_password_reset, name='request-password-reset'),
+    path('reset-password/', views.reset_password, name='reset-password'),
+
     # ── Volunteer listing ────────────────────────────────────────────────────
     path('volunteers/', views.list_volunteers, name='list-volunteers'),
 

@@ -21,31 +21,28 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
 
     def _can_chat_with_user(self, request_user, other_user):
         """
-        FIXED: Check if two users can chat.
-        - Volunteer and donor can chat if there's any donation between them
-        - NGO can chat with anyone involved in their assignments
-        - Same role users can chat (for admin/ngo staff)
+        Chat permission logic:
+        1. Same role users can always chat (donors↔donors, volunteers↔volunteers, etc)
+        2. Donors and volunteers CANNOT chat with each other (completely disabled)
+        3. NGOs can chat with anyone
         """
         from donations.models import Donation
-        
-        # If both are same role, allow (for admin/ngo staff)
+
+        # Same role always allowed
         if request_user.role == other_user.role:
             return True
-        
-        # Volunteer and donor: check if there's ANY donation (not just assigned ones)
-        if (request_user.role == 'volunteer' and other_user.role == 'donor') or \
-           (request_user.role == 'donor' and other_user.role == 'volunteer'):
-            has_donation = Donation.objects.filter(
-                (Q(donor=request_user) & Q(volunteer=other_user)) |
-                (Q(donor=other_user) & Q(volunteer=request_user)),
-                status__in=['assigned', 'in_transit', 'delivered']
-            ).exists()
-            return has_donation
-        
-        # NGO can chat with anyone involved in their assignments
+
+        # Donor-Volunteer chat is completely disabled
+        if (request_user.role == 'donor' and other_user.role == 'volunteer') or \
+           (request_user.role == 'volunteer' and other_user.role == 'donor'):
+            return False
+
+        # NGO side: always allow
         if request_user.role == 'ngo' or other_user.role == 'ngo':
             return True
-        
+
+        return False
+
         return False
 
     def perform_create(self, serializer):
@@ -56,9 +53,14 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         
         # Verify users can chat
         if not self._can_chat_with_user(self.request.user, recipient):
-            raise PermissionDenied(
-                "Chat not allowed. Volunteer must accept a donation before chatting with donor."
-            )
+            if (self.request.user.role in ['donor', 'volunteer']) and (recipient.role in ['donor', 'volunteer']):
+                raise PermissionDenied(
+                    "Chat between donors and volunteers is not available. Manage donations through your dashboard instead."
+                )
+            else:
+                raise PermissionDenied(
+                    "Chat is not available with this user."
+                )
         
         message = serializer.save(sender=self.request.user)
         
@@ -101,10 +103,12 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        # FIXED: Check permission before allowing conversation
-        if not self._can_chat_with_user(request.user, recipient):
+        # Check permission
+        can_chat = self._can_chat_with_user(request.user, recipient)
+        if not can_chat:
             return Response(
-                {"detail": "Chat not allowed. Volunteer must accept a donation before chatting."},
+                {"detail": "Chat available once a volunteer is assigned to a donation.",
+                 "can_chat": False},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -224,32 +228,84 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         return Response({"unread_count": unread})
 
     @action(detail=False, methods=['get'])
+    def check_permission(self, request):
+        """
+        Pre-flight check: can current user chat with user_id?
+        Returns {can_chat: bool, reason: str}
+        """
+        user_id = request.query_params.get('user_id')
+        if not user_id:
+            return Response({'can_chat': False, 'reason': 'user_id required'}, status=400)
+        try:
+            other = User.objects.get(id=user_id, is_active=True)
+        except User.DoesNotExist:
+            return Response({'can_chat': False, 'reason': 'User not found'}, status=404)
+
+        can = self._can_chat_with_user(request.user, other)
+        if can:
+            return Response({'can_chat': True, 'reason': ''})
+        else:
+            reason = 'Chat is not available with this user.'
+            if (request.user.role in ['donor', 'volunteer']) and (other.role in ['donor', 'volunteer']):
+                reason = 'Chat between donors and volunteers is not available. Manage donations through your dashboard instead.'
+            return Response({'can_chat': can, 'reason': reason})
+
+    @action(detail=False, methods=['get'])
+    def poll(self, request):
+        """
+        Efficient polling endpoint: returns messages since `after_id`.
+        GET /api/chat/messages/poll/?user_id=X&after_id=Y
+        """
+        user_id = request.query_params.get('user_id')
+        after_id = request.query_params.get('after_id', 0)
+        if not user_id:
+            return Response({'detail': 'user_id required'}, status=400)
+        try:
+            other = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=404)
+
+        if not self._can_chat_with_user(request.user, other):
+            return Response({'can_chat': False, 'messages': [], 'unread': 0})
+
+        qs = ChatMessage.objects.filter(
+            Q(sender=request.user, recipient=other) |
+            Q(sender=other, recipient=request.user)
+        )
+        if after_id:
+            qs = qs.filter(id__gt=int(after_id))
+        qs = qs.order_by('created_at')
+
+        # Mark incoming as read
+        qs.filter(recipient=request.user, is_read=False).update(
+            is_read=True, read_at=timezone.now()
+        )
+
+        unread_total = ChatMessage.objects.filter(
+            recipient=request.user, is_read=False
+        ).count()
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response({
+            'can_chat': True,
+            'messages': serializer.data,
+            'unread': unread_total,
+        })
+
+    @action(detail=False, methods=['get'])
     def available_users(self, request):
-        """Get list of users the current user can chat with (only users with active donation relationships)"""
+        """Get list of users the current user can chat with"""
         user = request.user
-        from donations.models import Donation
         
         if user.role == 'donor':
-            # Donors can chat with volunteers who accepted their donations
-            volunteer_ids = Donation.objects.filter(
-                donor=user,
-                volunteer__isnull=False,
-                status__in=['assigned', 'in_transit', 'delivered']
-            ).values_list('volunteer_id', flat=True).distinct()
-            users = User.objects.filter(id__in=volunteer_ids, is_active=True)
+            # Donors can only chat with other donors
+            users = User.objects.filter(role='donor', is_active=True).exclude(id=user.id)
         elif user.role == 'volunteer':
-            # Volunteers can chat with donors whose donations they've accepted
-            donor_ids = Donation.objects.filter(
-                volunteer=user,
-                status__in=['assigned', 'in_transit', 'delivered']
-            ).values_list('donor_id', flat=True).distinct()
-            users = User.objects.filter(id__in=donor_ids, is_active=True)
+            # Volunteers can only chat with other volunteers
+            users = User.objects.filter(role='volunteer', is_active=True).exclude(id=user.id)
         elif user.role == 'ngo':
-            # NGO can chat with donors and volunteers involved in their assignments
-            users = User.objects.filter(
-                Q(role='donor') | Q(role='volunteer'),
-                is_active=True
-            ).exclude(id=user.id)
+            # NGO can chat with all active users except themselves
+            users = User.objects.filter(is_active=True).exclude(id=user.id)
         else:
             users = User.objects.filter(is_active=True).exclude(id=user.id)
 

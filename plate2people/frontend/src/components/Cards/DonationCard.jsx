@@ -10,7 +10,6 @@ const DonationCard = ({
   donation, 
   onAccept, 
   onReject, 
-  onChat,
   onMarkDelivered,
   onStartDelivery,
   onViewDetails,
@@ -282,20 +281,9 @@ const DonationCard = ({
                   handleStartDelivery();
                 }}
                 disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? '⏳ Starting...' : '🚚 Start Delivery'}
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChat?.(donation.id);
-                }}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
-              >
-                💬 Chat
               </motion.button>
             </div>
           )}
@@ -311,20 +299,9 @@ const DonationCard = ({
                   handleMarkDelivered();
                 }}
                 disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? '⏳ Completing...' : '✅ Mark Delivered'}
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChat?.(donation.id);
-                }}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
-              >
-                💬 Chat
               </motion.button>
             </div>
           )}
@@ -382,7 +359,7 @@ const DonationCard = ({
            !isCompleted && 
            donation.status !== 'in_transit' && 
            donation.status !== 'expired' && 
-           role !== 'donor' && (
+           role === 'ngo' && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

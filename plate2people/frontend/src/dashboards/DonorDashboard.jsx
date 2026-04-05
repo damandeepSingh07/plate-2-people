@@ -6,7 +6,6 @@ import api from '../api/axios'
 import Navbar from '../components/Navbar'
 import RoleFixAlert from '../components/RoleFixAlert'
 import DonationForm from '../components/Forms/DonationForm'
-import SecondaryItemsForm from '../components/Forms/SecondaryItemsForm'
 import DonationCard from '../components/Cards/DonationCard'
 import DonationDetailsModal from '../components/Modals/DonationDetailsModal'
 import ChatModal from '../components/Modals/ChatModal'
@@ -15,10 +14,8 @@ import BadgesDisplay from '../components/Gamification/BadgesDisplay'
 import { motion, AnimatePresence } from 'framer-motion'
 import './Dashboard.css'
 
-const DONATION_TYPES = [
-  { key: 'food',   label: '🍱 Food',        desc: 'Cooked meals, groceries, packaged food' },
-  { key: 'items',  label: '👕 Clothes & Items', desc: 'Clothes, books, toys, essentials' },
-]
+
+
 
 export default function DonorDashboard() {
   const { user } = useAuth()
@@ -26,9 +23,7 @@ export default function DonorDashboard() {
   const { userPoints, fetchUserPoints } = useGamification()
 
   const [donations, setDonations] = useState([])
-  const [donationItems, setDonationItems] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [donationType, setDonationType] = useState('food')   // 'food' | 'items'
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('donations')    // donations | leaderboard | badges
   const [filter, setFilter] = useState('all')
@@ -39,13 +34,12 @@ export default function DonorDashboard() {
 
   useEffect(() => {
     fetchDonations()
-    fetchDonationItems()
     if (user) fetchUserPoints()
   }, [])
 
   useEffect(() => {
     if (!socket) return
-    socket.on('donation:created', () => { fetchDonations(); fetchDonationItems() })
+    socket.on('donation:created', () => { fetchDonations() })
     socket.on('donation:status_changed', () => fetchDonations())
     socket.on('points:earned', () => fetchUserPoints())
     return () => {
@@ -64,12 +58,7 @@ export default function DonorDashboard() {
     finally { setLoading(false) }
   }
 
-  const fetchDonationItems = async () => {
-    try {
-      const res = await api.get('/donations/items/')
-      setDonationItems(res.data || [])
-    } catch (e) { console.error('Error fetching items:', e) }
-  }
+
 
   const filteredDonations = donations.filter(d => filter === 'all' || d.status === filter)
 
@@ -137,7 +126,7 @@ export default function DonorDashboard() {
           {[
             { label: 'Total Points', value: userPoints || 0, color: 'from-amber-400 to-orange-500', sub: '⭐ Earned' },
             { label: 'Food Donations', value: donations.length, color: 'from-blue-400 to-blue-600', sub: `📦 ${donations.reduce((s, d) => s + (d.quantity_number || 0), 0)} units` },
-            { label: 'Item Donations', value: donationItems.length, color: 'from-purple-400 to-purple-600', sub: '👕 Non-food items' },
+            { label: 'In Progress', value: donations.filter(d => d.status === 'assigned' || d.status === 'in_transit').length, color: 'from-purple-400 to-purple-600', sub: '🚚 Being delivered' },
             { label: 'Delivered', value: donations.filter(d => d.status === 'delivered').length, color: 'from-emerald-400 to-green-600', sub: '✓ Successfully shared' },
           ].map(s => (
             <motion.div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-xl p-6 shadow-lg text-white`} variants={itemVariants}>
@@ -162,60 +151,18 @@ export default function DonorDashboard() {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                {/* Donation type selector tabs */}
-                <div className="flex border-b border-gray-100">
-                  {DONATION_TYPES.map(dt => (
-                    <button
-                      key={dt.key}
-                      onClick={() => setDonationType(dt.key)}
-                      className={`flex-1 py-4 px-6 text-left transition ${
-                        donationType === dt.key
-                          ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-b-2 border-orange-500'
-                          : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      <p className={`font-bold text-lg ${donationType === dt.key ? 'text-orange-600' : 'text-gray-600'}`}>
-                        {dt.label}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{dt.desc}</p>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Form content */}
-                <div className="p-6">
-                  <AnimatePresence mode="wait">
-                    {donationType === 'food' ? (
-                      <motion.div
-                        key="food-form"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <DonationForm
-                          onSuccess={() => { setShowForm(false); fetchDonations() }}
-                          onClose={() => setShowForm(false)}
-                        />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="items-form"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <SecondaryItemsForm
-                          onSuccess={() => { setShowForm(false); fetchDonationItems() }}
-                          onClose={() => setShowForm(false)}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
+                  <motion.div
+                    key="food-form"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <DonationForm
+                      onSuccess={() => { setShowForm(false); fetchDonations() }}
+                      onClose={() => setShowForm(false)}
+                    />
+                  </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -295,31 +242,6 @@ export default function DonorDashboard() {
               </motion.div>
             )}
 
-            {/* Non-food items section */}
-            {donationItems.length > 0 && filter === 'all' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <span>👕</span> My Item Donations
-                  <span className="text-sm font-normal text-gray-500">({donationItems.length} items)</span>
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {donationItems.map(item => (
-                    <div key={item.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-800">{item.title}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          item.status === 'available' ? 'bg-green-100 text-green-700' :
-                          item.status === 'delivered' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>{item.status}</span>
-                      </div>
-                      <p className="text-sm text-gray-500 capitalize">{item.item_type} · {item.condition} · Qty: {item.quantity}</p>
-                      {item.description && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{item.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
           </motion.div>
         )}
 

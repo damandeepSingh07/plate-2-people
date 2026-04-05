@@ -270,3 +270,55 @@ def remove_volunteer_from_ngo(request, pk):
     link.is_active = False
     link.save()
     return Response({'message': 'Volunteer removed from your team.'}, status=200)
+
+
+# ─── Password Reset Views ─────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    """
+    Request a password reset email.
+    Body: { "email": "user@example.com" }
+    """
+    email = request.data.get('email', '').strip()
+    if not email:
+        return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    success = EmailService.request_password_reset(email)
+    if success:
+        return Response({
+            'message': 'Password reset link sent to your email. Check your inbox.',
+        }, status=status.HTTP_200_OK)
+    else:
+        # Always return success for security (don't reveal if email exists)
+        return Response({
+            'message': 'If this email exists in our system, a reset link has been sent.',
+        }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    """
+    Reset password using token from email.
+    Body: { "token": "token_value", "new_password": "newpass123" }
+    """
+    token = request.data.get('token', '').strip()
+    new_password = request.data.get('new_password', '').strip()
+
+    if not token or not new_password:
+        return Response({'error': 'Token and new password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(new_password) < 8:
+        return Response({'error': 'Password must be at least 8 characters long.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    success = EmailService.reset_password_with_token(token, new_password)
+    if success:
+        return Response({
+            'message': 'Password has been reset successfully. You can now log in with your new password.',
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            'error': 'Invalid or expired reset token. Please request a new password reset.',
+        }, status=status.HTTP_400_BAD_REQUEST)

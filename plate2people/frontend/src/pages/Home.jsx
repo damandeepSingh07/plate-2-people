@@ -25,14 +25,15 @@ function useCountUp(target, duration = 1800, start = false) {
 
 /* ── Stats data ─────────────────────────────────────────────── */
 const STATS = [
-  { raw: '12000+', label: 'Meals Shared',    icon: '🍱', color: '#f97316' },
-  { raw: '340+',   label: 'Active Donors',   icon: '❤️',  color: '#f43f5e' },
-  { raw: '80+',    label: 'NGO Partners',    icon: '🏢', color: '#7c3aed' },
-  { raw: '500+',   label: 'Volunteers',       icon: '🚴', color: '#16a34a' },
+  { raw: 'Growing', label: 'Community Impact',    icon: '🌍', color: '#f97316' },
+  { raw: 'Join',   label: 'As Food Donor',   icon: '🍱',  color: '#f43f5e' },
+  { raw: 'Partner',    label: 'With NGOs',    icon: '🏢', color: '#7c3aed' },
+  { raw: 'Volunteer',   label: 'Make Impact',       icon: '🚴', color: '#16a34a' },
 ]
 
 function StatCard({ stat, index, visible }) {
-  const count = useCountUp(stat.raw, 1600, visible)
+  const hasNumber = /\d/.test(stat.raw)
+  const count = hasNumber ? useCountUp(stat.raw, 1600, visible) : stat.raw
   return (
     <div className="stat-card fade-up" style={{ animationDelay: `${index * 0.1}s` }}>
       <span className="stat-icon" style={{ backgroundColor: stat.color + '18' }}>{stat.icon}</span>
