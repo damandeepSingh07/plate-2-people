@@ -89,15 +89,7 @@ export default function SignIn() {
     } finally { setLoading(false) }
   }
 
-  const handleGoogleSignIn = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-    const redirectUri = `${window.location.origin}/auth/google`
-    if (clientId) {
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`
-    } else {
-      setError('Google Sign-In is not configured')
-    }
-  }
+
 
   return (
     <div className="auth-page">
@@ -185,12 +177,6 @@ export default function SignIn() {
                       {loading ? '⏳ Signing in…' : '→ Sign In'}
                     </button>
                   </form>
-
-                  <div className="divider-modern" style={{ margin: '24px 0' }}>or</div>
-
-                  <button onClick={handleGoogleSignIn} className="modern-btn google">
-                    <span className="google-icon">🔵</span> Continue with Google
-                  </button>
 
                   <div className="auth-links">
                     <button onClick={() => setStep('forgot')} className="auth-link-modern">

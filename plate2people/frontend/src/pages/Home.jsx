@@ -1,43 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import './Home.css'
 
-/* ── Animated counter hook ─────────────────────────────────── */
-function useCountUp(target, duration = 1800, start = false) {
-  const [count, setCount] = useState(0)
-  useEffect(() => {
-    if (!start) return
-    let startTime = null
-    const num = parseInt(target.replace(/\D/g, ''))
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp
-      const progress = Math.min((timestamp - startTime) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
-      setCount(Math.floor(eased * num))
-      if (progress < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
-  }, [start, target, duration])
-  const suffix = target.replace(/[\d,]/g, '')
-  return count.toLocaleString() + suffix
-}
-
 /* ── Stats data ─────────────────────────────────────────────── */
 const STATS = [
-  { raw: '12000+', label: 'Meals Shared',    icon: '🍱', color: '#f97316' },
-  { raw: '340+',   label: 'Active Donors',   icon: '❤️',  color: '#f43f5e' },
-  { raw: '80+',    label: 'NGO Partners',    icon: '🏢', color: '#7c3aed' },
-  { raw: '500+',   label: 'Volunteers',       icon: '🚴', color: '#16a34a' },
+  { icon: '🍱', label: 'Meals Shared',    color: '#f97316' },
+  { icon: '❤️',  label: 'Active Donors',   color: '#f43f5e' },
+  { icon: '🏢', label: 'NGO Partners',    color: '#7c3aed' },
+  { icon: '🚴', label: 'Volunteers',       color: '#16a34a' },
 ]
 
-function StatCard({ stat, index, visible }) {
-  const count = useCountUp(stat.raw, 1600, visible)
+function StatCard({ stat, index }) {
   return (
     <div className="stat-card fade-up" style={{ animationDelay: `${index * 0.1}s` }}>
       <span className="stat-icon" style={{ backgroundColor: stat.color + '18' }}>{stat.icon}</span>
-      <span className="stat-number" style={{ color: stat.color }}>{count}</span>
-      <span className="stat-label">{stat.label}</span>
+      <span className="stat-label" style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 700 }}>{stat.label}</span>
+      <span className="stat-label" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.7rem' }}>Growing every day</span>
     </div>
   )
 }
@@ -127,18 +105,6 @@ const ROLES = [
 const FOODS = ['🥘','🥗','🍞','🥛','🍎','🥕','🧆','🍛','🫓','🍜']
 
 export default function Home() {
-  const statsRef = useRef(null)
-  const [statsVisible, setStatsVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true) },
-      { threshold: 0.3 }
-    )
-    if (statsRef.current) observer.observe(statsRef.current)
-    return () => observer.disconnect()
-  }, [])
-
   return (
     <div className="home">
       <Navbar />
@@ -208,7 +174,7 @@ export default function Home() {
               ))}
             </div>
             <p className="proof-text">
-              <strong>840+ people</strong> made a difference this week
+              Join our growing community of food heroes
             </p>
           </div>
         </div>
@@ -220,10 +186,10 @@ export default function Home() {
       </section>
 
       {/* ── STATS ─────────────────────────────────── */}
-      <section className="stats-section" ref={statsRef}>
+      <section className="stats-section">
         <div className="stats-grid container">
           {STATS.map((s, i) => (
-            <StatCard key={i} stat={s} index={i} visible={statsVisible} />
+            <StatCard key={i} stat={s} index={i} />
           ))}
         </div>
       </section>

@@ -262,7 +262,7 @@ const DonationCard = ({
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChat?.(donation.id);
+                  onChat?.(donation);
                 }}
                 className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
               >
@@ -291,7 +291,7 @@ const DonationCard = ({
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChat?.(donation.id);
+                  onChat?.(donation);
                 }}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
               >
@@ -320,7 +320,7 @@ const DonationCard = ({
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChat?.(donation.id);
+                  onChat?.(donation);
                 }}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
               >
@@ -342,7 +342,7 @@ const DonationCard = ({
                   whileTap={{ scale: 0.95 }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onChat?.(donation.id);
+                    onChat?.(donation);
                   }}
                   className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
                 >
@@ -388,7 +388,7 @@ const DonationCard = ({
               whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
-                onChat?.(donation.id);
+                onChat?.(donation);
               }}
               className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-2 rounded-lg transition"
             >
