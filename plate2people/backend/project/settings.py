@@ -92,6 +92,16 @@ REST_FRAMEWORK = {
     ),
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://plate-2-people.onrender.com",
+]
+
+ALLOWED_HOSTS = [
+    "plate-2-people.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
+
 # JWT Settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
