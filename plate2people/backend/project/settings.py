@@ -110,7 +110,9 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = [
+    "https://plate-2-people.vercel.app"
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ── Email Settings ─────────────────────────────────────────────────────────────
