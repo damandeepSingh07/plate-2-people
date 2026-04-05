@@ -97,9 +97,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 ALLOWED_HOSTS = [
-    "plate-2-people.onrender.com",
-    "localhost",
-    "127.0.0.1",
+    "https://plate-2-people.onrender.com",
+    "https://plate-2-people.vercel.app/"
 ]
 
 # JWT Settings
