@@ -175,8 +175,11 @@ export default function SignIn() {
                     </button>
                   </form>
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> Daman
                   <div className="auth-links">
                     <button onClick={() => setStep('forgot')} className="auth-link-modern">
                       Forgot password?

@@ -9,7 +9,7 @@ api.interceptors.request.use((config) => {
   if (!(config.data instanceof FormData)) {
     config.headers['Content-Type'] = 'application/json'
   }
-  
+
   const token = localStorage.getItem('access_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
@@ -25,7 +25,7 @@ api.interceptors.response.use(
       const refresh = localStorage.getItem('refresh_token')
       if (refresh) {
         try {
-          const { data } = await axios.post('http://localhost:8000/api/token/refresh/', { refresh })
+          const { data } = await axios.post('https://plate2people.onrender.com/api/token/refresh/', { refresh })
           localStorage.setItem('access_token', data.access)
           original.headers.Authorization = `Bearer ${data.access}`
           return api(original)
