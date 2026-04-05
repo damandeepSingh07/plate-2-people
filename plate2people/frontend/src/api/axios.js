@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://plate-2-people.onrender.com',
 })
 
 // Set default JSON header for non-FormData requests
