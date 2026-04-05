@@ -59,7 +59,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://plate-2-people.onrender.com",
+]
 
+ALLOWED_HOSTS = [
+    "plate-2-people.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 if os.getenv("DATABASE_URL"):
     DATABASES = {
